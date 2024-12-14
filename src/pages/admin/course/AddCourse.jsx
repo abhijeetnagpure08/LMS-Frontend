@@ -10,15 +10,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useCreateCourseMutation } from "@/features/api/courseApi";
 import { Loader2 } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 export const AddCourse = () => {
   const [courseTitle, setCourseTitle] = useState("");
   const [category, setCategory] = useState("");
 
-  const isLoading = false;
+  const [createCourse, { data, isLoading, error, isSuccess }] =
+    useCreateCourseMutation();
+
+  // const isLoading = false;
   const navigate = useNavigate();
 
   const getSelectedCategory = (value) => {
@@ -27,8 +32,15 @@ export const AddCourse = () => {
   };
 
   const createCourseHandler = async () => {
-    
+    await createCourse({ courseTitle, category });
   };
+
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success(data?.messsage || "Course created");
+      navigate("/admin/course");
+    }
+  }, [isSuccess, error]);
 
   return (
     <div className="flex-1 mx-10">
@@ -59,6 +71,7 @@ export const AddCourse = () => {
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
+                <SelectLabel>Category</SelectLabel>
                 <SelectItem value="Next JS">Next JS</SelectItem>
                 <SelectItem value="Data Science">Data Science</SelectItem>
                 <SelectItem value="Frontend Development">
