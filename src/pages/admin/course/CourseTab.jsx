@@ -21,7 +21,7 @@ import { Label } from "@/components/ui/label";
 import React, { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useEditCourseMutation } from "@/features/api/courseApi";
+import { useEditCourseMutation, useGetCourseByIdQuery } from "@/features/api/courseApi";
 import { toast } from "sonner";
 
 export const CourseTab = () => {
@@ -29,6 +29,8 @@ export const CourseTab = () => {
   const params =useParams();
   const courseId = params.courseId;
   const [previewThumbnail, setPreviewThumbnail] = useState("");
+  const {data:courseByIdData,isLoading:courseByIdLoading, refetch} = useGetCourseByIdQuery(courseId);
+
   const [input, setInput] = useState({
     courseTitle: "",
     subTitle: "",
@@ -38,6 +40,21 @@ export const CourseTab = () => {
     coursePrice: "",
     courseThumbnail: "",
   });
+
+  useEffect(() => {
+    if (courseByIdData?.course) { 
+        const course = courseByIdData?.course;
+      setInput({
+        courseTitle: course.courseTitle,
+        subTitle: course.subTitle,
+        description: course.description,
+        category: course.category,
+        courseLevel: course.courseLevel,
+        coursePrice: course.coursePrice,
+        courseThumbnail: "",
+      });
+    }
+  }, [courseByIdData]);
 
   const [editCourse,{data, isLoading,error,isSuccess}] = useEditCourseMutation();
 
@@ -75,7 +92,6 @@ export const CourseTab = () => {
     await editCourse({formData,courseId});
   };
 
-  
 
   useEffect(()=> {
     if(isSuccess){
@@ -87,6 +103,8 @@ export const CourseTab = () => {
   },[isSuccess,error]);
 
   const isPublished = false;
+
+  if(courseByIdLoading) return <h1>Loading...</h1>
 
   return (
     <Card>

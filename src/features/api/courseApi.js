@@ -31,15 +31,23 @@ export const courseApi = createApi({
         method: "PUT",
         body: formData,
       }),
+      invalidatesTags: ["REFETCH_CREATOR_COURSE"],
     }),
-    // editCourse: builder.mutation({
-    //   query: ({formData,courseId}) => ({
-    //     url:`/${courseId}`,
-    //     method: "PUT",
-    //     body: formData
-    //   })
-    // })
+    getCourseById: builder.query({
+      query: (courseId) => ({
+        url: `/${courseId}`,
+        method: "GET",
+      }),
+      providesTags: ["REFETCH_CREATOR_COURSE"],
+    }),
+    createLecture: builder.mutation({
+      query: ({lectureTitle,courseId}) => ({
+        url: `/${courseId}/lecture`,
+        method: "POST",
+        body: {lectureTitle},
+      }),
+    })
   }),
 });
 
-export const { useCreateCourseMutation, useGetCreatorCourseQuery,useEditCourseMutation } = courseApi;
+export const { useCreateCourseMutation, useGetCreatorCourseQuery,useEditCourseMutation, useGetCourseByIdQuery,useCreateLectureMutation } = courseApi;
