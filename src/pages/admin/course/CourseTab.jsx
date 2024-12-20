@@ -21,15 +21,25 @@ import { Label } from "@/components/ui/label";
 import React, { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useEditCourseMutation, useGetCourseByIdQuery } from "@/features/api/courseApi";
+import {
+  useEditCourseMutation,
+  useGetCourseByIdQuery,
+  usePublishCourseMutation,
+} from "@/features/api/courseApi";
 import { toast } from "sonner";
 
 export const CourseTab = () => {
   const navigate = useNavigate();
-  const params =useParams();
+  const params = useParams();
   const courseId = params.courseId;
   const [previewThumbnail, setPreviewThumbnail] = useState("");
-  const {data:courseByIdData,isLoading:courseByIdLoading, refetch} = useGetCourseByIdQuery(courseId);
+  const {
+    data: courseByIdData,
+    isLoading: courseByIdLoading,
+    refetch,
+  } = useGetCourseByIdQuery(courseId);
+
+  const [publishCourse] = usePublishCourseMutation();
 
   const [input, setInput] = useState({
     courseTitle: "",
@@ -42,8 +52,8 @@ export const CourseTab = () => {
   });
 
   useEffect(() => {
-    if (courseByIdData?.course) { 
-        const course = courseByIdData?.course;
+    if (courseByIdData?.course) {
+      const course = courseByIdData?.course;
       setInput({
         courseTitle: course.courseTitle,
         subTitle: course.subTitle,
@@ -56,7 +66,8 @@ export const CourseTab = () => {
     }
   }, [courseByIdData]);
 
-  const [editCourse,{data, isLoading,error,isSuccess}] = useEditCourseMutation();
+  const [editCourse, { data, isLoading, error, isSuccess }] =
+    useEditCourseMutation();
 
   const changeEventHandler = (e) => {
     const { name, value } = e.target;
@@ -82,29 +93,38 @@ export const CourseTab = () => {
 
   const updateCourseHandler = async () => {
     const formData = new FormData();
-    formData.append("courseTitle",input.courseTitle);
-    formData.append("subTitle",input.subTitle);
-    formData.append("description",input.description);
-    formData.append("category",input.category);
-    formData.append("courseLevel",input.courseLevel);
-    formData.append("coursePrice",input.coursePrice);
-    formData.append("courseThumbnail",input.courseThumbnail);
-    await editCourse({formData,courseId});
+    formData.append("courseTitle", input.courseTitle);
+    formData.append("subTitle", input.subTitle);
+    formData.append("description", input.description);
+    formData.append("category", input.category);
+    formData.append("courseLevel", input.courseLevel);
+    formData.append("coursePrice", input.coursePrice);
+    formData.append("courseThumbnail", input.courseThumbnail);
+    await editCourse({ formData, courseId });
   };
 
-
-  useEffect(()=> {
-    if(isSuccess){
-      toast.success(data.message || "Course updated")
+  const publishStatusHandler = async (action) => {
+    try {
+      const response = await publishCourse({ courseId, query: action });
+      if (response.data) {
+        refetch();
+        toast.success(response.data.message);
+      }
+    } catch (error) {
+      toast.error("Failed to publish or unpublish course");
     }
-    if(error){
-      toast.error(error.data.message || "Failed to update course")
+  };
+
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success(data.message || "Course updated");
     }
-  },[isSuccess,error]);
+    if (error) {
+      toast.error(error.data.message || "Failed to update course");
+    }
+  }, [isSuccess, error]);
 
-  const isPublished = false;
-
-  if(courseByIdLoading) return <h1>Loading...</h1>
+  if (courseByIdLoading) return <h1>Loading...</h1>;
 
   return (
     <Card>
@@ -116,8 +136,16 @@ export const CourseTab = () => {
           </CardDescription>
         </div>
         <div className="space-x-2">
-          <Button variant="outline">
-            {isPublished ? "Unpublish" : "Publish"}
+          <Button
+            disabled={courseByIdData?.course.lectures.length === 0}
+            variant="outline"
+            onClick={() =>
+              publishStatusHandler(
+                courseByIdData?.course.isPublished ? "false" : "true"
+              )
+            }
+          >
+            {courseByIdData?.course.isPublished ? "Unpublished" : "Publish"}
           </Button>
           <Button>Remove Course</Button>
         </div>
