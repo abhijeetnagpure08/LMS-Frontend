@@ -57,7 +57,7 @@ export const Navbar = () => {
       <div className="w-11/12 mx-auto hidden md:flex justify-between items-center gap-10 h-full">
         <div className="flex items-center gap-2">
           <School size={"30"} />
-          <Link>
+          <Link to={'/'}>
             <h1 className="hidden md:block font-extrabold text-2xl">
               E-Learning
             </h1>
@@ -109,7 +109,7 @@ export const Navbar = () => {
         </div>
       </div>
       <div className="md:hidden flex items-center justify-between px-4 h-full">
-        <h1 className="font-extrabold text-2xl">E-Learning</h1>
+        <Link><h1 className="font-extrabold text-2xl">E-Learning</h1></Link>
         <MobileNavbar />
       </div>
     </div>
