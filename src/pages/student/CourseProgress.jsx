@@ -42,10 +42,10 @@ export const CourseProgress = () => {
   if (isLoading) return <p>Loading...</p>;
   if (isError) return <p>Failed to load course details</p>;
 
-  console.log(data);
+  console.log(data.data);
 
   const { courseDetails, progress, completed } = data.data;
-  const { courseTitle } = courseDetails;
+  const { courseTitle,description } = courseDetails;
 
   // initialze the first lecture is not exist
   const initialLecture =
@@ -74,7 +74,7 @@ export const CourseProgress = () => {
   };
 
   return (
-    <div className="w-10/12 mx-auto p-4 mt-24">
+    <div className="w-10/12 mx-auto p-4 ">
       {/* Display course name  */}
       <div className="flex justify-between mb-4">
         <h1 className="text-2xl font-bold">{courseTitle}</h1>
@@ -160,6 +160,7 @@ export const CourseProgress = () => {
           </div>
         </div>
       </div>
+      
     </div>
   );
 };

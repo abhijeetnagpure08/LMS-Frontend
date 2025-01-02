@@ -22,6 +22,8 @@ export const CourseDetail = () => {
   const navigate = useNavigate();
   const {data, isLoading, isError, isSuccess, refetch} = useGetCourseDetailWithStatusQuery(courseId);
   const purchasedCourse = false;
+  console.log(data);
+  
 
   useEffect(()=> {
     refetch()
@@ -41,7 +43,7 @@ export const CourseDetail = () => {
   }
   
   return (
-    <div className="mt-24 space-y-5">
+    <div className=" space-y-5">
       <div className="bg-[#2D2F31] text-white">
         <div className="w-10/12 mx-auto py-8 px-4 md:px-8 flex flex-col gap-2">
           <h1 className="font-bold text-2xl md:text-3xl">{course?.courseTitle}</h1>
@@ -68,7 +70,7 @@ export const CourseDetail = () => {
           <Card>
             <CardHeader>
               <CardTitle>Course Content</CardTitle>
-              <CardDescription>4 lectures</CardDescription>
+              <CardDescription>{course?.lectures.length} Lectures</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
             {course.lectures.map((lecture, idx) => (

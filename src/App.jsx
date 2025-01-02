@@ -14,9 +14,18 @@ import { AddCourse } from "./pages/admin/course/AddCourse";
 import { EditCourse } from "./pages/admin/course/EditCourse";
 import { CreateLecture } from "./pages/admin/lecture/CreateLecture";
 import { EditLecture } from "./pages/admin/lecture/EditLecture";
-import { CourseDetail } from "./pages/admin/course/CourseDetail";
-import { CourseProgress } from "./pages/admin/course/CourseProgress";
-import { Payment } from "./pages/admin/course/Payment";
+import { CourseDetail } from "./pages/student/CourseDetail";
+import { CourseProgress } from "./pages/student/CourseProgress";
+import { Payment } from "./pages/student/Payment";
+import { SearchPage } from "./pages/student/SearchPage";
+import {
+  AdminRoute,
+  AuthenticatedUser,
+  ProtectedRoute,
+} from "./components/ProtectedRoutes";
+import { PurchaseCourseProtectedRoute } from "./components/PurchaseCourseProtectedRoute";
+import { ThemeProvider } from "./components/ThemeProvider";
+import { useEffect } from "react";
 const appRouter = createBrowserRouter([
   {
     path: "/",
@@ -34,47 +43,68 @@ const appRouter = createBrowserRouter([
       {
         path: "/login",
         element: (
-          <>
+          <AuthenticatedUser>
             <Login />
-          </>
+          </AuthenticatedUser>
         ),
       },
       {
         path: "my-learning",
         element: (
-          <>
+          <ProtectedRoute>
             <MyLearning />
-          </>
+          </ProtectedRoute>
         ),
       },
       {
         path: "profile",
         element: (
-          <>
+          <ProtectedRoute>
             <Profile />
-          </>
+          </ProtectedRoute>
         ),
-        
+      },
+      {
+        path: "course/search",
+        element: (
+          <ProtectedRoute>
+            <SearchPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "course-detail/:courseId",
-        element: <CourseDetail />,
+        element: (
+          <ProtectedRoute>
+            <CourseDetail />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "course-progress/:courseId",
-        element: <CourseProgress />,
+        element: (
+            <PurchaseCourseProtectedRoute>
+          <ProtectedRoute>
+              <CourseProgress />
+          </ProtectedRoute>
+            </PurchaseCourseProtectedRoute>
+        ),
       },
       {
         path: "payment/:courseId",
-        element: <Payment />,
+        element: (
+          <ProtectedRoute>
+            <Payment />
+          </ProtectedRoute>
+        ),
       },
       // admin routes
       {
         path: "admin",
         element: (
-          <>
+          <AdminRoute>
             <Sidebar />
-          </>
+          </AdminRoute>
         ),
         children: [
           {
@@ -107,10 +137,13 @@ const appRouter = createBrowserRouter([
   },
 ]);
 
+
 function App() {
   return (
     <main>
-      <RouterProvider router={appRouter} />
+      <ThemeProvider>
+        <RouterProvider router={appRouter} />
+      </ThemeProvider>
     </main>
   );
 }

@@ -23,6 +23,7 @@ export const Login = () => {
   const [signupInput, setSignupInput] = useState({
     name: "",
     email: "",
+    role: "",
     password: "",
   });
   const [loginInput, setLoginInput] = useState({ email: "", password: "" });
@@ -120,6 +121,17 @@ export const Login = () => {
                   name="email"
                   value={signupInput.email}
                   placeholder="Eg. patel@gmail.com"
+                  onChange={(e) => changeInputHandler(e, "signup")}
+                  required="true"
+                />
+              </div>
+              <div className="space-y-1">
+                <Label htmlFor="username">Role</Label>
+                <Input
+                  type="text"
+                  name="role"
+                  value={signupInput.role}
+                  placeholder="instructor or student" 
                   onChange={(e) => changeInputHandler(e, "signup")}
                   required="true"
                 />
