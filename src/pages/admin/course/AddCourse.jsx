@@ -41,6 +41,7 @@ export const AddCourse = () => {
       navigate("/admin/course");
     }
   }, [isSuccess, error]);
+  
 
   return (
     <div className="flex-1 mx-10">
